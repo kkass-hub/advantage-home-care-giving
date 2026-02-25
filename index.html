@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register &amp; Job Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; background:#e8f5e9; color:#1b5e20; }
+        h1 { color:#2e7d32; }
+        label { display: block; margin-top: 1rem; }
+        input, select, textarea, button { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border:1px solid #1b5e20; border-radius:4px; }
+        button { background:#2e7d32; color:white; cursor:pointer; }
+        button:hover { background:#1b5e20; }
+        .mpesa { margin-top: 1rem; background: #a5d6a7; padding: 1rem; border:1px solid #1b5e20; border-radius:4px; }
+        .theme-toggle { position:fixed; top:1rem; right:1rem; padding:0.5rem; background:#2e7d32; color:#fff; border:none; border-radius:4px; }
+    </style>
+</head>
+<body>
+    <h1>Advantage home care Register </h1>
+    <p>Fill in your personal details to register. After registering you will be directed to the job application page.</p>
+
+    <form id="regForm" onsubmit="return handleRegister(event)">
+        <fieldset>
+            <legend>Personal Information</legend>
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required>
+              
+            <label for="otherName">Other Name</label>
+            <input type="text" id="otherName" name="otherName" required>
+
+
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" required>
+
+
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" required>
+
+            <label for="current">Current Location</label>
+            <input type="text" id="current" name="current" required>
+
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required>
+        </fieldset>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeBtn');
+            btn.textContent = document.body.classList.contains('dark') ? 'Light Mode' : 'Dark Mode';
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const reg = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim()
+            };
+            localStorage.setItem('registration', JSON.stringify(reg));
+            // move to job form page
+            window.location.href = 'jobindex.html';
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('firstName').focus();
+            const saved = JSON.parse(localStorage.getItem('registration') || '{}');
+            if (saved.firstName) {
+                // prefill if user came back
+                Object.keys(saved).forEach(k => {
+                    const el = document.getElementById(k);
+                    if (el) el.value = saved[k];
+                });
+            }
+        });
+    </script>
+</body>
+</html>
