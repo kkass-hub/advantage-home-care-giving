@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Form &amp; Payment</title>
+     <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; background:#063b66; color:#f1f1f1; }
+        h1 { color:#854141; }
+        label { display: block; margin-top: 1rem; }
+        input, select, textarea, button { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border:1px solid #f8faf9; border-radius:4px; }
+        button { background:#fcfdfc; color:rgb(233, 12, 12); cursor:pointer; }
+        button:hover { background:#14d60d; }
+        .mpesa { margin-top: 1rem; background: #0ae00a; padding: 1rem; border:1px solid #109610; border-radius:4px; }
+        .theme-toggle { position:fixed; top:1rem; right:1rem; padding:0.5rem; background:#2e407d; color:#2712df; border:none; border-radius:4px; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">Dark Mode</button>
+    <!-- top center contact button -->
+    <div style="text-align:center; margin:1rem 0;">
+        <button type="button" onclick="window.location.href='tel:+16087220790'">Contact: +1(608) 722-0790</button>
+    </div>
+    <h1>Job Application</h1>
+    <p id="regInfo"></p>
+
+    <form id="jobForm" onsubmit="return handleSubmit(event)">
+        <fieldset>
+            <legend>Job Details</legend>
+            <label for="position">Position Applied For</label>
+            <select id="position" name="position" required>
+                <option value="">--Select--</option>
+                <option value="developer">Beginner Employee</option>
+                <option value="designer">Intermediate</option>
+                <option value="manager">Experienced</option>
+            </select>
+
+            <label for="coverLetter">Cover Letter</label>
+            <textarea id="coverLetter" name="coverLetter" rows="4" required></textarea>
+
+            <label for="idUpload">Upload ID</label>
+            <input type="file" id="idUpload" name="idUpload" accept=".jpg,.jpeg,.png,.pdf" required />
+
+            <label for="cvUpload">Upload CV</label>
+            <input type="file" id="cvUpload" name="cvUpload" accept=".doc,.docx,.pdf" required />
+
+            <label for="passportUpload">Upload Passport</label>
+            <input type="file" id="passportUpload" name="passportUpload" accept=".jpg,.jpeg,.png,.pdf" required />
+        </fieldset>
+
+        <div class="mpesa">
+            <strong>Fee Payment</strong>
+            <p>Please proceed to the payment page and complete the  transaction.</p>
+            <button type="button" onclick="window.location.href='mpesaindex.html'">Go to payment</button>
+            
+        </div>
+
+        
+    </form>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeBtn');
+            btn.textContent = document.body.classList.contains('dark') ? 'Light Mode' : 'Dark Mode';
+        }
+
+
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            alert('Application submitted! Please wait for verification.');
+            return true;
+        }
+
+        function getFormData() {
+            const data = {};
+            ['position','coverLetter'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) data[id] = el.value;
+            });
+            // store file names for uploads (cannot store file objects)
+            ['idUpload','cvUpload','passportUpload'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.files && el.files[0]) {
+                    data[id] = el.files[0].name;
+                }
+            });
+            return data;
+        }
+
+        function setFormData(data) {
+            Object.keys(data).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (el.type === 'file') {
+                        // can't prefill file inputs
+                    } else {
+                        el.value = data[id];
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const reg = JSON.parse(localStorage.getItem('registration') || '{}');
+            if (reg.firstName) {
+                document.getElementById('regInfo').textContent =
+                    `Registered as ${reg.firstName} ${reg.lastName} (${reg.email}, ${reg.phone}).`;
+            } else {
+                document.getElementById('regInfo').textContent =
+                    'No registration data found. Please register first.';
+            }
+            const saved = localStorage.getItem('jobFormData');
+            if (saved) setFormData(JSON.parse(saved));
+            const form = document.getElementById('jobForm');
+            form.addEventListener('input', () => {
+                localStorage.setItem('jobFormData', JSON.stringify(getFormData()));
+            });
+        });
+    </script>
+
+
+</body>
+</html>
